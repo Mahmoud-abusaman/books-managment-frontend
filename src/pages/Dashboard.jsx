@@ -6,21 +6,11 @@ import { Plus, LogOut, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import BookForm from "@/components/BookForm";
 
-export interface Book {
-  id: string;
-  title: string;
-  author: string;
-  status: "interested" | "reading" | "finished";
-  created_at: string;
-  updated_at: string;
-  user_id: string;
-}
-
 const Dashboard = () => {
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showBookForm, setShowBookForm] = useState(false);
-  const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const [editingBook, setEditingBook] = useState(null);
   const { toast } = useToast();
 
   const statusColors = {
@@ -40,7 +30,7 @@ const Dashboard = () => {
       console.log("Loading books...");
       
       // Mock data for demonstration
-      const mockBooks: Book[] = [
+      const mockBooks = [
         {
           id: "1",
           title: "The Great Gatsby",
@@ -64,7 +54,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteBook = async (bookId: string) => {
+  const handleDeleteBook = async (bookId) => {
     try {
       // TODO: Implement your API call to delete book
       console.log("Deleting book:", bookId);
@@ -103,7 +93,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleBookSaved = (savedBook: Book) => {
+  const handleBookSaved = (savedBook) => {
     if (editingBook) {
       setBooks(books.map(book => book.id === savedBook.id ? savedBook : book));
     } else {
@@ -113,7 +103,7 @@ const Dashboard = () => {
     setEditingBook(null);
   };
 
-  const handleEditBook = (book: Book) => {
+  const handleEditBook = (book) => {
     setEditingBook(book);
     setShowBookForm(true);
   };
