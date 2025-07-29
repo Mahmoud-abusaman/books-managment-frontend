@@ -13,11 +13,7 @@ const Dashboard = () => {
   const [editingBook, setEditingBook] = useState(null);
   const { toast } = useToast();
 
-  const statusColors = {
-    interested: "bg-status-interested text-status-interested-foreground",
-    reading: "bg-status-reading text-status-reading-foreground",
-    finished: "bg-status-finished text-status-finished-foreground",
-  };
+  // Status badge variants are now handled by the Badge component
 
   useEffect(() => {
     loadBooks();
@@ -162,7 +158,7 @@ const Dashboard = () => {
                       <CardTitle className="text-lg">{book.title}</CardTitle>
                       <CardDescription>by {book.author}</CardDescription>
                     </div>
-                    <Badge className={statusColors[book.status]}>
+                    <Badge variant={book.status}>
                       {book.status}
                     </Badge>
                   </div>
