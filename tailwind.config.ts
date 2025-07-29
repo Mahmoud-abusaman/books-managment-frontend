@@ -52,18 +52,6 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				'status-interested': {
-					DEFAULT: 'hsl(var(--status-interested))',
-					foreground: 'hsl(var(--status-interested-foreground))'
-				},
-				'status-reading': {
-					DEFAULT: 'hsl(var(--status-reading))',
-					foreground: 'hsl(var(--status-reading-foreground))'
-				},
-				'status-finished': {
-					DEFAULT: 'hsl(var(--status-finished))',
-					foreground: 'hsl(var(--status-finished-foreground))'
-				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

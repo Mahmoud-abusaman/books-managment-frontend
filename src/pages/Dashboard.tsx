@@ -6,14 +6,28 @@ import { Plus, LogOut, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import BookForm from "@/components/BookForm";
 
+export interface Book {
+  id: string;
+  title: string;
+  author: string;
+  status: "interested" | "reading" | "finished";
+  created_at: string;
+  updated_at: string;
+  user_id: string;
+}
+
 const Dashboard = () => {
-  const [books, setBooks] = useState([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showBookForm, setShowBookForm] = useState(false);
-  const [editingBook, setEditingBook] = useState(null);
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
   const { toast } = useToast();
 
-  // Status badge variants are now handled by the Badge component
+  const statusColors = {
+    interested: "bg-blue-100 text-blue-800",
+    reading: "bg-yellow-100 text-yellow-800",
+    finished: "bg-green-100 text-green-800",
+  };
 
   useEffect(() => {
     loadBooks();
@@ -26,7 +40,7 @@ const Dashboard = () => {
       console.log("Loading books...");
       
       // Mock data for demonstration
-      const mockBooks = [
+      const mockBooks: Book[] = [
         {
           id: "1",
           title: "The Great Gatsby",
@@ -50,7 +64,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleDeleteBook = async (bookId) => {
+  const handleDeleteBook = async (bookId: string) => {
     try {
       // TODO: Implement your API call to delete book
       console.log("Deleting book:", bookId);
@@ -89,7 +103,7 @@ const Dashboard = () => {
     }
   };
 
-  const handleBookSaved = (savedBook) => {
+  const handleBookSaved = (savedBook: Book) => {
     if (editingBook) {
       setBooks(books.map(book => book.id === savedBook.id ? savedBook : book));
     } else {
@@ -99,7 +113,7 @@ const Dashboard = () => {
     setEditingBook(null);
   };
 
-  const handleEditBook = (book) => {
+  const handleEditBook = (book: Book) => {
     setEditingBook(book);
     setShowBookForm(true);
   };
@@ -158,7 +172,7 @@ const Dashboard = () => {
                       <CardTitle className="text-lg">{book.title}</CardTitle>
                       <CardDescription>by {book.author}</CardDescription>
                     </div>
-                    <Badge variant={book.status}>
+                    <Badge className={statusColors[book.status]}>
                       {book.status}
                     </Badge>
                   </div>

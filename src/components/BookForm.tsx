@@ -5,17 +5,24 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
+import { Book } from "@/pages/Dashboard";
 
-const BookForm = ({ book, onSave, onCancel }) => {
+interface BookFormProps {
+  book?: Book | null;
+  onSave: (book: Book) => void;
+  onCancel: () => void;
+}
+
+const BookForm = ({ book, onSave, onCancel }: BookFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     title: book?.title || "",
     author: book?.author || "",
-    status: book?.status || "interested",
+    status: book?.status || "interested" as const,
   });
   const { toast } = useToast();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -23,7 +30,7 @@ const BookForm = ({ book, onSave, onCancel }) => {
       // TODO: Implement your API call to create/update book
       console.log(book ? "Updating book:" : "Creating book:", formData);
       
-      const savedBook = {
+      const savedBook: Book = {
         id: book?.id || Date.now().toString(),
         title: formData.title,
         author: formData.author,
@@ -49,7 +56,7 @@ const BookForm = ({ book, onSave, onCancel }) => {
     }
   };
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
