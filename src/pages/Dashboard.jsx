@@ -14,9 +14,9 @@ const Dashboard = () => {
   const { toast } = useToast();
 
   const statusColors = {
-    interested: "bg-blue-100 text-blue-800",
-    reading: "bg-yellow-100 text-yellow-800",
-    finished: "bg-green-100 text-green-800",
+    interested: "bg-status-interested text-status-interested-foreground",
+    reading: "bg-status-reading text-status-reading-foreground",
+    finished: "bg-status-finished text-status-finished-foreground",
   };
 
   useEffect(() => {
