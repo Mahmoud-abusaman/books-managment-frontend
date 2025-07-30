@@ -18,6 +18,7 @@ export interface Book {
 
 const Dashboard = () => {
   const token = localStorage.getItem("authToken");
+  const userName = localStorage.getItem("user");
   if (!token) {
     window.location.href = '/auth';
 
@@ -162,7 +163,7 @@ const Dashboard = () => {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold">My Books</h1>
+            <h1 className="text-3xl font-bold">Hi {userName}!</h1>
             <p className="text-muted-foreground">Manage your personal library</p>
           </div>
           <div className="flex gap-2">

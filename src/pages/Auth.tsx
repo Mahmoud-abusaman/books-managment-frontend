@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const Auth = () => {
   // const navigate = useNavigate();
@@ -23,10 +22,12 @@ const Auth = () => {
       const res = await axios.post("http://localhost:5000/api/v1/auth/login", {
         email, password
       })
-      console.log(res)
+      console.log(res.data.data)
       const token1 = res.data.data.token;
       setToken(token1);
       localStorage.setItem('authToken', token1)
+      localStorage.setItem('user', res.data.data.user);
+
       toast({
         title: "Login successful",
         description: "Welcome back!",
@@ -52,10 +53,11 @@ const Auth = () => {
     const formData = new FormData(e.currentTarget);
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+    const name = formData.get("name") as string;
 
     try {
       const res = await axios.post("http://localhost:5000/api/v1/auth/register", {
-        name: "name", email, password
+        name, email, password
       })
 
       toast({
@@ -116,6 +118,14 @@ const Auth = () => {
 
             <TabsContent value="register" className="space-y-4">
               <form onSubmit={handleRegister} className="space-y-4">
+                <div className="space-y-2">
+                  <Input
+                    name="name"
+                    type="text"
+                    placeholder="name"
+                    required
+                  />
+                </div>
                 <div className="space-y-2">
                   <Input
                     name="email"
