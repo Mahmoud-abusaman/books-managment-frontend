@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Plus, LogOut, Edit, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import BookForm from "@/components/BookForm";
-
+import axiosInstance from "../axiosInstance";
 export interface Book {
   id: string;
   title: string;
@@ -17,6 +17,11 @@ export interface Book {
 }
 
 const Dashboard = () => {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    window.location.href = '/auth';
+
+  }
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showBookForm, setShowBookForm] = useState(false);
@@ -36,24 +41,23 @@ const Dashboard = () => {
   const loadBooks = async () => {
     setIsLoading(true);
     try {
-      // TODO: Implement your API call to fetch books
-      console.log("Loading books...");
-      
-      // Mock data for demonstration
-      const mockBooks: Book[] = [
-        {
-          id: "1",
-          title: "The Great Gatsby",
-          author: "F. Scott Fitzgerald",
-          status: "finished",
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          user_id: "user1"
+      const data = (await axiosInstance.get("/books")).data
+
+      setBooks(data.data.books.map((book) => {
+        return {
+          id: book._id,
+          title: book.title,
+          author: book.author,
+          status: book.status,
+          // created_at: "string",
+          // updated_at: "string",
+          user_id: book.createdBy,
         }
-      ];
-      
-      setBooks(mockBooks);
+      }))
+
+
     } catch (error) {
+      console.log(error)
       toast({
         title: "Failed to load books",
         description: "Something went wrong",
@@ -66,9 +70,9 @@ const Dashboard = () => {
 
   const handleDeleteBook = async (bookId: string) => {
     try {
-      // TODO: Implement your API call to delete book
+      const data = (await axiosInstance.delete(`/books/${bookId}`)).data
       console.log("Deleting book:", bookId);
-      
+
       setBooks(books.filter(book => book.id !== bookId));
       toast({
         title: "Book deleted",
@@ -85,15 +89,13 @@ const Dashboard = () => {
 
   const handleLogout = async () => {
     try {
-      // TODO: Implement your logout API call here
-      console.log("Logging out...");
-      
+      localStorage.removeItem('authToken');
       toast({
         title: "Logged out",
         description: "See you next time!",
       });
-      
-      // TODO: Redirect to auth page
+      window.location.href = '/';
+      console.log("Logging out...");
     } catch (error) {
       toast({
         title: "Logout failed",
@@ -103,11 +105,34 @@ const Dashboard = () => {
     }
   };
 
-  const handleBookSaved = (savedBook: Book) => {
+  const handleBookSaved = async (savedBook: Book) => {
     if (editingBook) {
-      setBooks(books.map(book => book.id === savedBook.id ? savedBook : book));
+      try {
+        axiosInstance.patch(`books/${savedBook.id}`, { title: savedBook.title, author: savedBook.author, status: savedBook.status })
+        setBooks(books.map(book => book.id === savedBook.id ? savedBook : book));
+
+      } catch (error) {
+        console.log(error);
+        toast({
+          title: "Failed to add book",
+          description: "Something went wrong",
+          variant: "destructive",
+        })
+      }
     } else {
-      setBooks([savedBook, ...books]);
+      try {
+        const data = await axiosInstance.post("books", { title: savedBook.title, author: savedBook.author, status: savedBook.status })
+        setBooks([{ ...savedBook, id: data.data.data.book._id }, ...books]);
+
+      } catch (error) {
+        console.log(error);
+        toast({
+          title: "Failed to add book",
+          description: "Something went wrong",
+          variant: "destructive",
+        })
+
+      }
     }
     setShowBookForm(false);
     setEditingBook(null);
@@ -119,6 +144,7 @@ const Dashboard = () => {
   };
 
   const handleAddBook = () => {
+
     setEditingBook(null);
     setShowBookForm(true);
   };
@@ -183,15 +209,15 @@ const Dashboard = () => {
                       Added {new Date(book.created_at).toLocaleDateString()}
                     </p>
                     <div className="flex gap-2">
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         variant="outline"
                         onClick={() => handleEditBook(book)}
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
-                      <Button 
-                        size="sm" 
+                      <Button
+                        size="sm"
                         variant="destructive"
                         onClick={() => handleDeleteBook(book.id)}
                       >
